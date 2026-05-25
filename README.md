@@ -1,4 +1,9 @@
-# AI Whisperers Infrastructure
+# AI Whisperers Infrastructure Documentation
+
+> **Role update (org centralization):** this repository is **docs-only**.
+> Runtime infrastructure source-of-truth and executable IaC live in **Ai-Whisperers/aiw-infra**.
+> Do not add deploy scripts or operational runtime assets here.
+
 
 Central documentation for the AI Whisperers production infrastructure.
 
