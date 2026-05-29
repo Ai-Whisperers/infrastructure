@@ -1,0 +1,73 @@
+{
+  "plugins": [
+    {
+      "id": "repository-operations",
+      "name": "Repository Operations Plugin",
+      "version": "1.0.0",
+      "description": "Core repository management and health monitoring capabilities",
+      "agents": [
+        "repository-health-scanner",
+        "documentation-guardian",
+        "todo-excavator"
+      ],
+      "dependencies": [
+        "github.service",
+        "docs-check.scanner",
+        "todo-scanner.service"
+      ],
+      "category": "core",
+      "enabled": true
+    },
+    {
+      "id": "integration-sync",
+      "name": "Integration & Sync Plugin",
+      "version": "1.0.0",
+      "description": "External system integration and synchronization",
+      "agents": [
+        "ado-github-linker"
+      ],
+      "dependencies": [
+        "azure-devops.service",
+        "ado-github-linker.service"
+      ],
+      "category": "integration",
+      "enabled": true
+    },
+    {
+      "id": "reporting-analytics",
+      "name": "Reporting & Analytics Plugin",
+      "version": "1.0.0",
+      "description": "Report generation and organizational analytics",
+      "agents": [
+        "org-pulse-reporter"
+      ],
+      "dependencies": [
+        "org-pulse.reporter",
+        "reports.service"
+      ],
+      "category": "analytics",
+      "enabled": true
+    },
+    {
+      "id": "communication-hub",
+      "name": "Communication Hub Plugin",
+      "version": "1.0.0",
+      "description": "Multi-channel notification and communication management",
+      "agents": [
+        "slack-notifier"
+      ],
+      "dependencies": [
+        "slack.service"
+      ],
+      "category": "communication",
+      "enabled": true
+    }
+  ],
+  "metadata": {
+    "version": "1.0.0",
+    "plugin_system_version": "1.0.0",
+    "total_plugins": 4,
+    "load_strategy": "lazy",
+    "cache_enabled": true
+  }
+}

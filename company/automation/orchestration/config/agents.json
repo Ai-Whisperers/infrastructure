@@ -1,0 +1,106 @@
+{
+  "agents": [
+    {
+      "id": "repository-health-scanner",
+      "name": "Repository Health Scanner",
+      "category": "monitoring",
+      "description": "Scans GitHub repositories for health metrics, stale PRs, and activity",
+      "service": "github.service",
+      "capabilities": [
+        "health-score-calculation",
+        "stale-pr-detection",
+        "branch-protection-check",
+        "activity-tracking"
+      ],
+      "model": "haiku",
+      "priority": "high",
+      "enabled": true
+    },
+    {
+      "id": "ado-github-linker",
+      "name": "ADO-GitHub Sync Agent",
+      "category": "integration",
+      "description": "Bidirectional synchronization between Azure DevOps and GitHub",
+      "service": "ado-github-linker.service",
+      "capabilities": [
+        "work-item-linking",
+        "drift-detection",
+        "automatic-repair",
+        "pr-commit-parsing"
+      ],
+      "model": "haiku",
+      "priority": "critical",
+      "enabled": true
+    },
+    {
+      "id": "documentation-guardian",
+      "name": "Documentation Guardian",
+      "category": "governance",
+      "description": "Ensures documentation compliance and generates missing docs",
+      "service": "docs-check.scanner",
+      "capabilities": [
+        "template-validation",
+        "coverage-analysis",
+        "auto-generation",
+        "ci-gate-enforcement"
+      ],
+      "model": "sonnet",
+      "priority": "medium",
+      "enabled": true
+    },
+    {
+      "id": "org-pulse-reporter",
+      "name": "Organization Pulse Reporter",
+      "category": "reporting",
+      "description": "Generates comprehensive organizational health reports",
+      "service": "org-pulse.reporter",
+      "capabilities": [
+        "activity-aggregation",
+        "contributor-ranking",
+        "trend-analysis",
+        "multi-format-output"
+      ],
+      "model": "sonnet",
+      "priority": "medium",
+      "enabled": true
+    },
+    {
+      "id": "slack-notifier",
+      "name": "Slack Notification Agent",
+      "category": "communication",
+      "description": "Delivers intelligent notifications to Slack channels",
+      "service": "slack.service",
+      "capabilities": [
+        "alert-routing",
+        "context-enrichment",
+        "priority-filtering",
+        "digest-creation"
+      ],
+      "model": "haiku",
+      "priority": "low",
+      "enabled": true
+    },
+    {
+      "id": "todo-excavator",
+      "name": "TODO Excavator",
+      "category": "development",
+      "description": "Scans and synchronizes TODO comments across repositories",
+      "service": "todo-scanner.service",
+      "capabilities": [
+        "code-scanning",
+        "todo-extraction",
+        "cross-repo-sync",
+        "tracking-automation"
+      ],
+      "model": "haiku",
+      "priority": "low",
+      "enabled": true
+    }
+  ],
+  "metadata": {
+    "version": "1.0.0",
+    "last_updated": "2025-10-24",
+    "total_agents": 6,
+    "categories": ["monitoring", "integration", "governance", "reporting", "communication", "development"]
+  }
+}

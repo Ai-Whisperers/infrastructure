@@ -1,0 +1,23 @@
+﻿{
+    "notifications":  {
+                          "methods":  [
+                                          "console",
+                                          "file",
+                                          "github-issue"
+                                      ],
+                          "enabled":  true
+                      },
+    "reportSchedule":  {
+                           "frequency":  "daily",
+                           "time":  "09:00",
+                           "enabled":  true
+                       },
+    "alertThresholds":  {
+                            "PRsStale":  3,
+                            "DaysInactive":  7,
+                            "HealthScore":  70,
+                            "IssuesOpen":  5
+                        },
+    "lastUpdated":  "2025-09-09T13:23:55Z",
+    "organization":  "Ai-Whisperers"
+}

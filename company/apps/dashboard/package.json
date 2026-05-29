@@ -1,0 +1,28 @@
+{
+  "name": "ai-whisperers-dashboard",
+  "version": "1.0.0",
+  "description": "Interactive project health dashboard with TODO tracking and commit monitoring",
+  "main": "api-server.js",
+  "scripts": {
+    "start": "node api-server.js",
+    "dev": "nodemon api-server.js",
+    "open": "start http://localhost:3001",
+    "build": "echo \"No build step required for dashboard\""
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "ws": "^8.14.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": [
+    "dashboard",
+    "project-management",
+    "github",
+    "todos"
+  ],
+  "author": "AI Whisperers",
+  "license": "MIT"
+}
