@@ -1,0 +1,29 @@
+# Hostinger MCP server config block — paste this into /root/.hermes/config.yaml
+# under the `mcp:` section, alphabetically after `github` and before `memory-server`
+#
+# Verified: hostinger-mcp-server v2.0.1 installed via npm install -g
+# Token: stored in /root/.hermes/.env as HOSTINGER_API_TOKEN (chmod 600)
+#
+# After pasting, restart Hermes gateway to load the new MCP.
+
+  hostinger:
+    args:
+      - --stdio
+    command: hostinger-mcp
+    enabled: true
+    env:
+      HOSTINGER_API_TOKEN: ${HOSTINGER_API_TOKEN}
+    tools:
+      include:
+        - getDomainsList
+        - getDomainDetails
+        - getDNSRecords
+        - addDNSRecord
+        - deleteDNSRecord
+        - getEmailsList
+        - getEmailAccount
+        - getHostingList
+        - getVPSList
+        - getVPSDetails
+      prompts: false
+      resources: false
