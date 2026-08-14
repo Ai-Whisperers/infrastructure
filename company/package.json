@@ -1,0 +1,70 @@
+{
+  "name": "company-information-org-os",
+  "version": "0.1.0",
+  "description": "AI-Whisperers Organizational Operating System - Central control plane for repository management",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "services/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev:dashboard & npm run dev:jobs",
+    "dev:dashboard": "cd apps/dashboard && npm run dev",
+    "dev:jobs": "cd services/jobs && npm run dev",
+    "build": "npm run build:dashboard && npm run build:jobs",
+    "build:dashboard": "cd apps/dashboard && npm run build",
+    "build:jobs": "cd services/jobs && npm run build",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "npm run test:dashboard && npm run test:jobs",
+    "test:dashboard": "cd apps/dashboard && npm test",
+    "test:jobs": "cd services/jobs && npm test",
+    "test:integration": "jest --config jest.integration.config.js",
+    "test:e2e": "playwright test",
+    "test:coverage": "npm run test:unit -- --coverage",
+    "test:watch": "npm run test:unit -- --watch",
+    "test:ci": "npm run test:unit -- --ci --coverage --maxWorkers=2",
+    "lint": "npm run lint:jobs",
+    "lint:jobs": "cd services/jobs && npm run lint",
+    "typecheck": "npm run typecheck:jobs",
+    "typecheck:jobs": "cd services/jobs && npm run typecheck",
+    "deploy:jobs": "cd services/jobs && npm run deploy",
+    "qa:test": "powershell -ExecutionPolicy Bypass -File ./scripts/testing/test-runner.ps1",
+    "qa:coverage": "powershell -ExecutionPolicy Bypass -File ./scripts/testing/test-runner.ps1 -TestType coverage -GenerateReport",
+    "qa:all": "powershell -ExecutionPolicy Bypass -File ./scripts/testing/test-runner.ps1 -TestType all -GenerateReport",
+    "test:real-data": "powershell -ExecutionPolicy Bypass -File ./scripts/testing/real-data-test-runner.ps1",
+    "test:real-unit": "powershell -ExecutionPolicy Bypass -File ./scripts/testing/real-data-test-runner.ps1 -TestType unit",
+    "test:real-integration": "powershell -ExecutionPolicy Bypass -File ./scripts/testing/real-data-test-runner.ps1 -TestType integration",
+    "test:real-e2e": "powershell -ExecutionPolicy Bypass -File ./scripts/testing/real-data-test-runner.ps1 -TestType e2e",
+    "test:real-performance": "powershell -ExecutionPolicy Bypass -File ./scripts/testing/real-data-test-runner.ps1 -TestType performance",
+    "test:max-coverage": "powershell -ExecutionPolicy Bypass -File ./scripts/testing/real-data-test-runner.ps1 -TestType all -CoverageThreshold 95"
+  },
+  "keywords": [
+    "org-os",
+    "github",
+    "azure-devops",
+    "monitoring",
+    "automation"
+  ],
+  "author": "AI-Whisperers",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3",
+    "@playwright/test": "^1.40.0",
+    "@types/jest": "^29.5.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.0",
+    "supertest": "^6.3.0",
+    "@faker-js/faker": "^8.0.0",
+    "jest-mock-extended": "^3.0.0",
+    "msw": "^2.0.0",
+    "dotenv": "^16.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "overrides": {
+    "tmp": "^0.2.4"
+  }
+}

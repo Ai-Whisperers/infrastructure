@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Whisperers - Project Health Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <h1>🚀 AI Whisperers Project Dashboard</h1>
+            <div class="header-controls">
+                <button id="refreshBtn" class="btn btn-primary">
+                    <span class="icon">🔄</span> Refresh All
+                </button>
+                <button id="syncBtn" class="btn btn-secondary">
+                    <span class="icon">⚔️</span> Run Excalibur Sync
+                </button>
+                <button id="downloadBtn" class="btn btn-success" disabled>
+                    <span class="icon">📥</span> Download Report
+                </button>
+                <button id="downloadTodosBtn" class="btn btn-info" disabled>
+                    <span class="icon">📋</span> Download TODOs
+                </button>
+                <div class="last-updated">
+                    Last updated: <span id="lastUpdateTime">Never</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="project-selector">
+            <label for="projectDropdown">Select Project:</label>
+            <select id="projectDropdown" class="project-dropdown">
+                <option value="">-- Select a project --</option>
+            </select>
+            <div class="project-status" id="projectStatus"></div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="metrics-panel">
+                <h2>📊 Project Metrics</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <span class="metric-label">Open Issues</span>
+                        <span class="metric-value" id="openIssues">-</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Open PRs</span>
+                        <span class="metric-value" id="openPRs">-</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Last Commit</span>
+                        <span class="metric-value" id="lastCommit">-</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Health Score</span>
+                        <span class="metric-value health-score" id="healthScore">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="todos-panel">
+                <h2>📝 Critical TODOs</h2>
+                <div class="todos-container" id="todosContainer">
+                    <p class="placeholder">Select a project to view its TODOs</p>
+                </div>
+            </div>
+
+            <div class="activity-panel">
+                <h2>⚡ Recent Activity</h2>
+                <div class="activity-feed" id="activityFeed">
+                    <p class="placeholder">No recent activity</p>
+                </div>
+            </div>
+
+            <div class="health-panel">
+                <h2>🏥 Health Indicators</h2>
+                <div class="health-indicators" id="healthIndicators">
+                    <div class="health-item">
+                        <span class="indicator" data-status="unknown">●</span>
+                        <span>Code Coverage</span>
+                    </div>
+                    <div class="health-item">
+                        <span class="indicator" data-status="unknown">●</span>
+                        <span>Build Status</span>
+                    </div>
+                    <div class="health-item">
+                        <span class="indicator" data-status="unknown">●</span>
+                        <span>Security Scan</span>
+                    </div>
+                    <div class="health-item">
+                        <span class="indicator" data-status="unknown">●</span>
+                        <span>Documentation</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="notification-area" id="notificationArea"></div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>

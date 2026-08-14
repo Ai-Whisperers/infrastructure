@@ -1,0 +1,175 @@
+{
+  "workflows": [
+    {
+      "id": "weekly-org-pulse",
+      "name": "Weekly Organization Pulse",
+      "description": "Comprehensive weekly health report generation and distribution",
+      "trigger": {
+        "type": "schedule",
+        "cron": "0 9 * * 1",
+        "timezone": "UTC"
+      },
+      "agents": [
+        {
+          "id": "repository-health-scanner",
+          "phase": "collection",
+          "parallel": true,
+          "timeout": "5m"
+        },
+        {
+          "id": "todo-excavator",
+          "phase": "collection",
+          "parallel": true,
+          "timeout": "3m"
+        },
+        {
+          "id": "org-pulse-reporter",
+          "phase": "analysis",
+          "depends_on": ["repository-health-scanner", "todo-excavator"],
+          "timeout": "10m"
+        },
+        {
+          "id": "slack-notifier",
+          "phase": "distribution",
+          "depends_on": ["org-pulse-reporter"],
+          "timeout": "1m"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "markdown",
+          "path": "data/reports/org-pulse-{date}.md"
+        },
+        {
+          "type": "json",
+          "path": "data/reports/org-pulse-{date}.json"
+        }
+      ],
+      "enabled": true
+    },
+    {
+      "id": "pr-quality-gate",
+      "name": "Pull Request Quality Gate",
+      "description": "Automated PR validation and documentation checks",
+      "trigger": {
+        "type": "event",
+        "event": "pull_request.opened"
+      },
+      "agents": [
+        {
+          "id": "documentation-guardian",
+          "phase": "validation",
+          "timeout": "2m"
+        },
+        {
+          "id": "repository-health-scanner",
+          "phase": "validation",
+          "parallel": true,
+          "timeout": "3m"
+        },
+        {
+          "id": "slack-notifier",
+          "phase": "notification",
+          "depends_on": ["documentation-guardian", "repository-health-scanner"],
+          "timeout": "30s",
+          "condition": "on_failure"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "github_comment",
+          "target": "pr"
+        }
+      ],
+      "enabled": true
+    },
+    {
+      "id": "ado-sync-cycle",
+      "name": "ADO-GitHub Sync Cycle",
+      "description": "Periodic synchronization with drift detection and repair",
+      "trigger": {
+        "type": "schedule",
+        "cron": "0 */6 * * *",
+        "timezone": "UTC"
+      },
+      "agents": [
+        {
+          "id": "ado-github-linker",
+          "phase": "sync",
+          "timeout": "10m"
+        },
+        {
+          "id": "slack-notifier",
+          "phase": "notification",
+          "depends_on": ["ado-github-linker"],
+          "timeout": "30s",
+          "condition": "on_drift_detected"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "log",
+          "path": "data/logs/ado-sync-{timestamp}.log"
+        }
+      ],
+      "enabled": true
+    },
+    {
+      "id": "compliance-audit",
+      "name": "Full Compliance Audit",
+      "description": "Comprehensive audit of all repositories for compliance and health",
+      "trigger": {
+        "type": "manual",
+        "command": "/compliance-audit"
+      },
+      "agents": [
+        {
+          "id": "repository-health-scanner",
+          "phase": "audit",
+          "parallel": true,
+          "timeout": "10m"
+        },
+        {
+          "id": "documentation-guardian",
+          "phase": "audit",
+          "parallel": true,
+          "timeout": "8m"
+        },
+        {
+          "id": "ado-github-linker",
+          "phase": "audit",
+          "parallel": true,
+          "timeout": "8m"
+        },
+        {
+          "id": "org-pulse-reporter",
+          "phase": "reporting",
+          "depends_on": ["repository-health-scanner", "documentation-guardian", "ado-github-linker"],
+          "timeout": "15m"
+        },
+        {
+          "id": "slack-notifier",
+          "phase": "distribution",
+          "depends_on": ["org-pulse-reporter"],
+          "timeout": "1m"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "markdown",
+          "path": "data/reports/compliance-audit-{date}.md"
+        },
+        {
+          "type": "html",
+          "path": "data/reports/compliance-audit-{date}.html"
+        }
+      ],
+      "enabled": true
+    }
+  ],
+  "metadata": {
+    "version": "1.0.0",
+    "last_updated": "2025-10-24",
+    "total_workflows": 4
+  }
+}

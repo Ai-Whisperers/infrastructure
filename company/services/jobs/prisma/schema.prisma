@@ -1,0 +1,158 @@
+// Simplified Prisma schema for SQLite development
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Repository {
+  id              String            @id @default(cuid())
+  name            String            @unique
+  url             String
+  description     String?
+  isPrivate       Int               @default(0)
+  starCount       Int               @default(0)
+  forkCount       Int               @default(0)
+  openIssues      Int               @default(0)
+  openPRs         Int               @default(0)
+  lastActivity    DateTime?
+  healthScore     Int               @default(0)
+  healthStatus    String            @default("UNKNOWN")
+  hasProtection   Int               @default(0)
+  requiredChecks  String?           // JSON stored as string
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  healthChecks    HealthCheck[]
+  workItemLinks   WorkItemLink[]
+  reports         Report[]
+  syncLogs        SyncLog[]
+}
+
+model WorkItem {
+  id              String            @id
+  title           String
+  state           String
+  areaPath        String?
+  iterationPath   String?
+  assignedTo      String?
+  organization    String
+  project         String
+  url             String
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  links           WorkItemLink[]
+}
+
+model WorkItemLink {
+  id              String            @id @default(cuid())
+  repositoryId    String
+  workItemId      String
+  pullRequestId   String?
+  commitSha       String?
+  linkType        String            // Enum as string
+  status          String            @default("ACTIVE")
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  repository      Repository        @relation(fields: [repositoryId], references: [id])
+  workItem        WorkItem          @relation(fields: [workItemId], references: [id])
+
+  @@unique([repositoryId, workItemId, pullRequestId])
+  @@index([workItemId])
+  @@index([repositoryId])
+}
+
+model HealthCheck {
+  id              String            @id @default(cuid())
+  repositoryId    String
+  checkType       String
+  status          String
+  message         String?
+  details         String?           // JSON stored as string
+  timestamp       DateTime          @default(now())
+
+  repository      Repository        @relation(fields: [repositoryId], references: [id])
+
+  @@index([repositoryId, timestamp])
+}
+
+model Report {
+  id              String            @id @default(cuid())
+  type            String
+  week            Int
+  year            Int
+  content         String
+  htmlContent     String?
+  summary         String?           // JSON stored as string
+  repositoryId    String?
+  generatedAt     DateTime          @default(now())
+
+  repository      Repository?       @relation(fields: [repositoryId], references: [id])
+
+  @@unique([type, week, year])
+  @@index([type, year, week])
+}
+
+model SyncLog {
+  id              String            @id @default(cuid())
+  repositoryId    String?
+  syncType        String
+  status          String
+  itemsProcessed  Int               @default(0)
+  itemsFailed     Int               @default(0)
+  errorMessage    String?
+  details         String?           // JSON stored as string
+  startedAt       DateTime
+  completedAt     DateTime?
+  duration        Int?              // in seconds
+
+  repository      Repository?       @relation(fields: [repositoryId], references: [id])
+
+  @@index([syncType, status])
+  @@index([startedAt])
+}
+
+model User {
+  id              String            @id @default(cuid())
+  email           String            @unique
+  name            String?
+  githubUsername  String?           @unique
+  azureId         String?           @unique
+  role            String            @default("VIEWER")
+  lastLogin       DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
+model Policy {
+  id              String            @id @default(cuid())
+  name            String            @unique
+  description     String?
+  enabled         Int               @default(1)
+  rules           String            // JSON stored as string
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  results         PolicyResult[]
+}
+
+model PolicyResult {
+  id              String            @id @default(cuid())
+  policyId        String
+  repositoryName  String
+  branch          String
+  status          String
+  violations      String?           // JSON stored as string
+  checkedAt       DateTime          @default(now())
+
+  policy          Policy            @relation(fields: [policyId], references: [id])
+
+  @@index([policyId, checkedAt])
+  @@index([repositoryName, branch])
+}
