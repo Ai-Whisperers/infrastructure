@@ -1,0 +1,81 @@
+# ============================================================
+# Laptop-side SSH config — paste this once into your laptop
+# ============================================================
+# File: ~/.ssh/config on ai-whisperers-server (your laptop)
+# Purpose: fix "Too many authentication failures" by telling ssh
+# to use ONLY the right key for hermes, and lock down retry behavior.
+#
+# From your laptop terminal:
+#   cat >> ~/.ssh/config <<'EOF'
+#
+# [paste the block below]
+#
+#   EOF
+#   chmod 600 ~/.ssh/config
+#
+# Then test:
+#   ssh -v hermes 'whoami && hostname && date'
+# ============================================================
+
+# --- hermes VPS (host-b) — Ivan's primary target ---
+Host hermes hermes-b hermes.paragu-ai.com 38.9.96.180
+    HostName 38.9.96.180
+    User hermes
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+    PreferredAuthentications publickey
+    PasswordAuthentication no
+    PubkeyAuthentication yes
+    ServerAliveInterval 30
+    ServerAliveCountMax 4
+    ConnectTimeout 8
+    # If you want to use a Tailscale IP instead (bypasses ISP blocks):
+    # HostName 100.78.180.49
+    # StrictHostKeyChecking accept-new
+
+# --- Host A (paragu-ai) — for cross-host ops ---
+Host paragu-ai host-a 38.9.96.179
+    HostName 38.9.96.179
+    User root
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+    PreferredAuthentications publickey
+    PasswordAuthentication no
+    ServerAliveInterval 30
+
+# --- Tailscale mesh (works through corporate firewalls) ---
+Host ts-hermes
+    HostName 100.78.180.49
+    User hermes
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+    PreferredAuthentications publickey
+
+Host ts-paragu
+    HostName 100.79.181.37
+    User root
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+    PreferredAuthentications publickey
+
+# ============================================================
+# NOTES
+# ============================================================
+# 1. The key fingerprint you need is the ed25519 key on your
+#    laptop. Verify it exists:
+#      ls -la ~/.ssh/id_ed25519
+#      ssh-keygen -lf ~/.ssh/id_ed25519
+#
+# 2. Your pubkey is ALREADY in the VPS authorized_keys:
+#    "ivan-laptop:hermes-vps" with fingerprint
+#    SHA256:Uo2wcM+GsIAxW4uwU2jXEzkPlQY7IGVoemaCkmRfwUM
+#    So ssh hermes should work passwordlessly once the config
+#    above is in place.
+#
+# 3. If you still get "Connection refused" with the config in
+#    place, your WiFi/ISP is blocking outbound 22 to the VPS.
+#    Pivot to:
+#      ssh ts-hermes
+#    which goes through Tailscale's encrypted tunnel (port 443
+#    under the hood) and works from any network.
+# ============================================================
