@@ -1,0 +1,62 @@
+name: CF Worker — aiw-fallback sync
+
+# Keeps the aiw-fallback Worker in Cloudflare in sync with the canonical source
+# in this repo. The Worker is the catch-all for *.paragu-ai.com/* and routes
+# recognized hostnames to the right CF Pages project.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'workers/aiw-fallback.js'
+      - '.github/workflows/deploy-worker.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy-worker:
+    name: Upload aiw-fallback.js to CF
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment: production  # requires CLOUDFLARE_API_TOKEN + CLOUDFLARE_ACCOUNT_ID
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Upload worker script via CF API
+        env:
+          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          echo "=== Uploading workers/aiw-fallback.js → aiw-fallback ==="
+          HTTP_CODE=$(curl -s -o /tmp/wr.json -w "%{http_code}" \
+            -X PUT \
+            -H "Authorization: Bearer $CF_API_TOKEN" \
+            -H "Content-Type: application/javascript; charset=utf-8" \
+            --data-binary @workers/aiw-fallback.js \
+            "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/workers/scripts/aiw-fallback")
+          echo "HTTP $HTTP_CODE"
+          cat /tmp/wr.json | python3 -m json.tool | head -10
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::error::Worker upload failed (HTTP $HTTP_CODE)"
+            exit 1
+          fi
+
+      - name: Smoke-probe known handles
+        if: success()
+        run: |
+          echo "=== Verifying the new Worker is live ==="
+          # Wait briefly for global propagation
+          sleep 3
+          for url in \
+            "https://geodata.paragu-ai.com/" \
+            "https://datos.paragu-ai.com/mapa.html" \
+            "https://geodata.paragu-ai.com/data/tile_index.json" ; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 \
+              -A "Mozilla/5.0" "$url")
+            echo "  $code  $url"
+            case "$code" in
+              200*) ;;
+              *) echo "::error::Probe failed: $url"; exit 1 ;;
+            esac
+          done
